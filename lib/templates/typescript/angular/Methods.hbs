@@ -1,0 +1,86 @@
+/// <reference path="api.d.ts" />
+module {{module}} {
+    'use strict';
+
+    export class {{clientName}}  {
+        private baseUri;
+{{> fields}}
+
+
+        /* @ngInject */
+        constructor(private $http: angular.IHttpService{{#hostInject}}, {{.}}: string{{/hostInject}}{{> constructorArgs}}) {
+            var hostName = '{{host}}';
+            {{#hostInject}}
+            if ({{.}}) {
+                hostName = {{.}};
+            }
+            {{/hostInject}}
+            this.baseUri = '{{scheme}}' + '://' + hostName + '{{basePath}}';
+        }
+        {{#methods}}
+
+        /*{{description}}*/
+        public {{verbCamlCase}}{{sanitizedPath}}({{#args}}{{argName}}{{#optional}}?{{/optional}}: {{type.name}}, {{/args}} canceller?: angular.IDeferred<any>): angular.IHttpPromise<{{returnType}}> {
+            var uri = this.baseUri + '{{path}}';
+            var queryParameters: any = {};
+            var headerParams: any = {};
+            var httpBody: any = null;
+
+        {{#isFormData}}
+            var formData = new FormData();
+            headerParams['Content-Type'] = undefined;
+        {{/isFormData}}
+
+        {{#args}}
+            {{#isHeader}}
+            headerParams['{{name}}'] = {{argName}};
+            {{/isHeader}}
+            {{#isQuery}}
+            queryParameters['{{name}}'] = {{argName}};
+            {{/isQuery}}
+            {{#isBody}}
+            httpBody = {{argName}};
+            {{/isBody}}
+            {{#isPath}}
+            uri = uri.replace(new RegExp('{' + '{{name}}' + '}', 'g'), String({{argName}}));
+            {{/isPath}}
+            {{#isFormData}}
+                {{#type.isFile}}
+            formData.append('{{name}}', new Blob([{{argName}}], {type: 'application/octet-stream'}));
+                {{/type.isFile}}
+            {{/isFormData}}
+        {{/args}}
+
+
+            var httpRequestParams: any = {
+                method: '{{verb}}',
+                url: uri,
+        {{#isJson}}
+                json: true,
+        {{/isJson}}
+        {{#isFormData}}
+                transformRequest: data => data,
+                data: formData,
+        {{/isFormData}}
+                params: queryParameters,
+                headers: headerParams
+            };
+
+            if (canceller){
+                httpRequestParams.timeout = canceller.promise;
+            }
+
+            if (httpBody != null){
+                httpRequestParams.data = httpBody;
+            }
+
+            {{#security}}
+            // {{key}}
+{{> (lookup . 'key')}}
+            {{/security}}
+
+            return this.$http(httpRequestParams);
+        }
+        {{/methods}}
+    }
+}

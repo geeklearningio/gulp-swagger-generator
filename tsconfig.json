@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "noImplicitAny": true,
+        "removeComments": true,
+        "preserveConstEnums": true,
+        "sourceMap": false,
+        "declaration": true,
+        "outDir": "./lib"
+    },
+    "filesGlob": [
+        "src/**/*.ts"
+    ],
+    "files": [
+        "src/index.ts",
+        "src/diagnostics.ts",
+        "src/parse.ts",
+        "src/contextBuilder",
+        "src/typescriptTypeMapper",
+        "src/csharpTypeMapper"
+    ]
+}
