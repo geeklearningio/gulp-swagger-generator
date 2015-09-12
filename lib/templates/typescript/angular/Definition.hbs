@@ -4,7 +4,7 @@ export interface {{pascalCase rawName}} {{#ancestor}}extends {{pascalCase rawNam
 
 {{#properties}}
 
-    {{name}} : {{#getType .}}any{{/getType}};
+    {{name}} : {{getType this}};
 
 {{/properties}}
 }
