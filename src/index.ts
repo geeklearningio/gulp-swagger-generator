@@ -33,6 +33,7 @@ module swaggerGenerator {
         templates?: {[name: string]: HandlebarsTemplateDelegate}
         handlebarsContext?: any,
         through: any;
+        languageOptions?: any;
     }
 }
 
@@ -66,6 +67,7 @@ function swaggerGenerator(options: swaggerGenerator.ISwaggerGeneratorOptions) {
                     return {options: options, api: result, through: through2Context};
                 })
                 .then(loadTemplateFiles)
+                .then(loadLanguageOptions)
                 .then(wrapHandleBarsContext)
                 .then(applyTemplates);
         }
@@ -96,7 +98,7 @@ function applyTemplates(context: swaggerGenerator.Context): Promise<swaggerGener
         var serviceClientFile = new gutil.File({
             cwd: "",
             base: "",
-            path: context.options.clientName + '.ts',
+            path: context.options.clientName + context.languageOptions.fileExtension,
             contents: new Buffer(singleFileTemplate(context.handlebarsContext), 'utf8')
         });
         context.through.push(serviceClientFile);
@@ -148,11 +150,26 @@ function loadTemplateFiles(context: swaggerGenerator.Context): Promise<swaggerGe
     return deferral.promise;
 }
 
+function loadLanguageOptions(context: swaggerGenerator.Context): Promise<swaggerGenerator.Context> {
+    var deferral = Promise.defer<swaggerGenerator.Context>();
+    var languageDir: string = context.options.templatePath ?
+        context.options.templatePath : path.join(__dirname, './templates/', context.options.template.split(/-/g)[0]);
+
+    fs.readFile(path.join(languageDir, 'languageOptions.json'), 'utf8', function (err: any, content: string) {
+        if (!err) {
+            context.languageOptions = JSON.parse(content);
+            deferral.resolve(context);
+        } else {
+            deferral.reject(err);
+        }
+    });
+    return deferral.promise;
+}
 
 function registerHelpers() {
 
     handlebars.registerHelper('lowerCase', (context: string) => {
-       return context.toLowerCase();
+        return context.toLowerCase();
     });
 
     handlebars.registerHelper('upperCase', (context: string) => {
@@ -177,6 +194,16 @@ function registerHelpers() {
 
         return pascalCasePreserve(<string[]>context);
     });
+
+    handlebars.registerHelper('pascalCaseOverwriteCasing', (context: any) => {
+        var contextType = typeof context;
+        if (contextType === 'string') {
+            context = context.split(/[^\w]/g);
+        }
+
+        return pascalCase(<string[]>context);
+    });
+
     gutil.log(gutil.colors.cyan('pascalCase registered'));
 
     handlebars.registerHelper('getType', function (context: any, options: any): any {
@@ -189,7 +216,7 @@ function registerHelpers() {
     });
 
     handlebars.registerHelper('mapLookup', function (map: any, lookupValue: string, options: any): any {
-        if (map){
+        if (map) {
             return options.fn(map[lookupValue]);
         }
         return options.fn({});
@@ -212,6 +239,13 @@ function camlCasePreserve(words: string[]): string {
 function pascalCasePreserve(words: string[]): string {
     return words.map((x: string, index: number)=> {
         return firstLetterUpperCasePreserveCasing(x);
+    }).join('');
+}
+
+
+function pascalCase(words: string[]): string {
+    return words.map((x: string, index: number)=> {
+        return firstLetterUpperCase(x);
     }).join('');
 }
 

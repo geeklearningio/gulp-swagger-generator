@@ -153,6 +153,7 @@ declare module "swagger-parser" {
         $ref: string;
         items?: IHasTypeInformation
         properties?: {[propertyName: string] : IProperty};
+        additionalProperties?: IHasTypeInformation
     }
 
     export  interface IXml {

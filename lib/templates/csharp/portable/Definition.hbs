@@ -1,10 +1,11 @@
 
 /*{{pascalCase rawName}}*/
-export interface {{pascalCase rawName}} {{#ancestor}}extends {{pascalCase rawName}}{{/ancestor}} {
+public class {{pascalCase rawName}} {{#ancestor}}: {{pascalCase rawName}}{{/ancestor}} {
 
 {{#properties}}
     /*{{description}}*/
-    {{name}} : {{> Type }};
+    [JsonProperty("{{name}}")]
+    public {{> Type }} {{pascalCase name}} {get; set;}
 
 {{/properties}}
 }
