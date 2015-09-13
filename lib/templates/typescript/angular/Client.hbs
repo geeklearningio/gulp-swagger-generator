@@ -1,7 +1,10 @@
 export class {{clientName}}  {
     private baseUri: string;
+<<<<<<< HEAD
     private hostName: string;
     private scheme: string;
+=======
+>>>>>>> 340d0b04f35e20607ee592abfaa94291411d0e85
 
     /* @ngInject */
     constructor(
@@ -10,6 +13,7 @@ export class {{clientName}}  {
         {{/options.inject}}
         private $http: angular.IHttpService
     ) {
+<<<<<<< HEAD
         this.hostName = '{{#options.host.override}}{{.}}{{/options.host.override}}{{#unless options.host.override}}{{api.host}}{{/unless}}';
         {{#options.host.set}}
         if ({{.}}) {
@@ -18,6 +22,9 @@ export class {{clientName}}  {
         {{/options.host.set}}
         this.scheme = '{{#options.scheme}}{{.}}{{/options.scheme}}{{#unless options.scheme}}'http'{{/unless}}';
         this.baseUri = this.scheme + '://' + this.hostName {{#api.basePath}}+ '{{.}}'{{/api.basePath}};
+=======
+
+>>>>>>> 340d0b04f35e20607ee592abfaa94291411d0e85
     }
 
 {{#api.operations}}
