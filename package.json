@@ -1,10 +1,6 @@
 {
  "name": "gulp-swagger-generator",
-<<<<<<< HEAD
- "version": "0.0.142",
-=======
- "version": "0.0.140",
->>>>>>> 340d0b04f35e20607ee592abfaa94291411d0e85
+ "version": "0.0.143",
  "description": "",
  "license": "",
  "repository": "",
