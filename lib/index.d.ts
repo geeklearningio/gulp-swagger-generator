@@ -8,6 +8,9 @@ declare module swaggerGenerator {
         templatePath?: string;
         templateOptions: any;
         handlerbarsExtensions?: any;
+        renameDefinitions?: {
+            [from: string]: string;
+        };
     }
     interface Context {
         options: ISwaggerGeneratorOptions;
