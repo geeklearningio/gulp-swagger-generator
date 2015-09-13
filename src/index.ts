@@ -24,6 +24,7 @@ module swaggerGenerator {
         templatePath?: string;
         templateOptions: any;
         handlerbarsExtensions?: any
+        renameDefinitions?: {[from: string]: string}
     }
 
     export interface Context {
@@ -42,6 +43,11 @@ function swaggerGenerator(options: swaggerGenerator.ISwaggerGeneratorOptions) {
     if (!options.clientName) {
         options.clientName = 'ApiClient';
     }
+
+    if (!options.renameDefinitions) {
+        options.renameDefinitions = {};
+    }
+
     return through.obj(function (file: any, enc: any, cb: Function) {
         let through2Context = this;
 
@@ -69,9 +75,10 @@ function swaggerGenerator(options: swaggerGenerator.ISwaggerGeneratorOptions) {
 function wrapHandleBarsContext(context: swaggerGenerator.Context): Promise<swaggerGenerator.Context> {
 
     context.handlebarsContext = {
-        api: contextBuilder.buildHandlebarsContext(context.api),
+        api: contextBuilder.buildHandlebarsContext(context.api, context.options.renameDefinitions),
         options: context.options.templateOptions,
-        isSingleFile: context.options.singleFile
+        isSingleFile: context.options.singleFile,
+        clientName: context.options.clientName
     };
 
     var concreteTypeMapper = require('./' + context.options.template.split('-')[0] + 'TypeMapper');
@@ -143,6 +150,15 @@ function loadTemplateFiles(context: swaggerGenerator.Context): Promise<swaggerGe
 
 
 function registerHelpers() {
+
+    handlebars.registerHelper('lowerCase', (context: string) => {
+       return context.toLowerCase();
+    });
+
+    handlebars.registerHelper('upperCase', (context: string) => {
+        return context.toUpperCase();
+    });
+
     handlebars.registerHelper('camlCase', (context: any) => {
         var contextType = typeof context;
         if (contextType === 'string') {
@@ -163,15 +179,22 @@ function registerHelpers() {
     });
     gutil.log(gutil.colors.cyan('pascalCase registered'));
 
-    handlebars.registerHelper('getType', (context: any, options: any) => {
+    handlebars.registerHelper('getType', function (context: any, options: any): any {
         var mapper = contextBuilder.getTypeMapper();
-        if (mapper)
-        {
-            return mapper.getType(context).name;
+        if (mapper) {
+            return options.fn(mapper.getType(context));
         } else {
-            return {}
+            return options.fn({});
         }
     });
+
+    handlebars.registerHelper('mapLookup', function (map: any, lookupValue: string, options: any): any {
+        if (map){
+            return options.fn(map[lookupValue]);
+        }
+        return options.fn({});
+    });
+
     gutil.log(gutil.colors.cyan('getType registered'));
 }
 

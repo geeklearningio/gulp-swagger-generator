@@ -102,8 +102,8 @@ declare module "swagger-parser" {
         security:  { [name: string]: string[]; }
     }
 
-    export interface  IParameterOrReference {
-        $ref?: string;
+    export interface  IParameterOrReference extends IHasTypeInformation {
+        $ref: string;
         name?: string;
         in?: string;
         description?: string;
@@ -123,6 +123,7 @@ declare module "swagger-parser" {
     }
 
     export interface  ISchema {
+        $ref: string
         discriminator?: string;
         readOnly?: boolean;
         xml?: IXml
@@ -143,13 +144,15 @@ declare module "swagger-parser" {
     }
 
     export interface IProperty extends IHasTypeInformation {
-
+        description?: string;
     }
 
     export interface IHasTypeInformation {
         type: string;
         format:string;
         $ref: string;
+        items?: IHasTypeInformation
+        properties?: {[propertyName: string] : IProperty};
     }
 
     export  interface IXml {
