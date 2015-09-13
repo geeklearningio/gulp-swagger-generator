@@ -24,6 +24,9 @@ class TypescriptTypeMapper implements contextBuilder.ITypeMapper {
         if (!property){
             return TypescriptType.any;
         }
+        if ((<any>property).isLanguageType) {
+            return <any>property;
+        }
         if (property.$ref) {
             //return TypescriptType.any;
             return TypescriptType.fromDefinition(this.definitions[property.$ref]);
@@ -52,6 +55,7 @@ class TypescriptTypeMapper implements contextBuilder.ITypeMapper {
 }
 
 class TypescriptType implements contextBuilder.IType {
+    isLanguageType: boolean;
     name: string;
     definition: contextBuilder.Definition;
     isAnonymous: boolean;
@@ -68,6 +72,7 @@ class TypescriptType implements contextBuilder.IType {
         this.isAnonymous = isAnonymous;
         this.isArray = false;
         this.isFile = isFile;
+        this.isLanguageType = true;
     }
 
     public static string: TypescriptType = new TypescriptType('string', null, true, false, false);

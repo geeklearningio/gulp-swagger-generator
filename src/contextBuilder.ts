@@ -19,6 +19,7 @@ export interface  IType {
     isBuiltin: boolean;
     isDefinition: boolean;
     isArray:boolean;
+    isLanguageType: boolean;
 }
 
 export function getTypeMapper() {
@@ -57,9 +58,10 @@ export function buildHandlebarsContext(api: parse.IParsedSwagger, renameDefiniti
         var ref = '#\/definitions\/' + definitionName.replace(/\//g, '~1');
 
         var renameTo = renameDefinitions[definitionName];
-
+        gutil.log(definitionName);
         if (renameTo) {
             definitionName = renameTo;
+            gutil.log('renaming : ' + renameTo);
         }
 
 
@@ -192,6 +194,7 @@ export class Argument implements parser.IHasTypeInformation {
     items: parser.IHasTypeInformation;
     description: string;
     optional: boolean;
+    additionalProperties: parser.IHasTypeInformation;
 
     constructor(parameter: parser.IParameterOrReference) {
         this.name = parameter.name;
@@ -202,6 +205,7 @@ export class Argument implements parser.IHasTypeInformation {
         this.$ref = parameter.$ref;
         this.description = parameter.description;
         this.optional = !parameter.required;
+        this.additionalProperties = parameter.additionalProperties;
     }
 }
 
@@ -252,6 +256,7 @@ export class Property implements parser.IHasTypeInformation {
     public description: string;
     public items: parser.IHasTypeInformation;
     public definition: Definition;
+    public additionalProperties: parser.IHasTypeInformation;
 
     constructor(name: string, schema: parser.IProperty) {
         this.name = name;
@@ -260,6 +265,7 @@ export class Property implements parser.IHasTypeInformation {
         this.type = schema.type;
         this.description = schema.description;
         this.items = schema.items;
+        this.additionalProperties = schema.additionalProperties;
 
         if (schema.properties) {
             this.definition = new Definition(name, schema);

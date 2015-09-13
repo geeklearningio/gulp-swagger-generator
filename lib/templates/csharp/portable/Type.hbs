@@ -3,4 +3,4 @@
         /*{{description}}*/
         {{name}} : {{> Type }};
     {{/definition.properties}}
-    }{{/isAnonymous}}{{#isArray}}[]{{/isArray}}{{/getType}}
+    }{{/isAnonymous}}{{#isArray}}[]{{/isArray}}{{#isDictionary}}{{name}}<{{#with keyType}}{{> Type}}{{/with}},{{> Type valueType}}>{{/isDictionary}}{{/getType}}

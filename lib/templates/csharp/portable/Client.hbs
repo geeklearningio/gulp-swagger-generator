@@ -1,83 +1,123 @@
-export class {{clientName}}  {
-    private baseUri: string;
+public class {{clientName}}  {
+    private string baseUri;
+    private string hostName;
+    private string scheme;
+    private HttpClient httpClient;
 
-    /* @ngInject */
-    constructor(
-        {{#options.inject}}
-        private {{name}}: {{type}},
-        {{/options.inject}}
-        private $http: angular.IHttpService
-    ) {
 
+public {{clientName}}(
+{{#options.inject}}
+    {{type}} {{name}}{{#unless @last}},{{/unless}}
+{{/options.inject}}
+) {
+    this.hostName = "{{#options.host.override}}{{.}}{{/options.host.override}}{{#unless options.host.override}}{{api.host}}{{/unless}}";
+{{#options.host.set}}
+    if (!string.IsNullOrEmpty({{.}})) {
+    this.hostName = {{.}};
     }
+{{/options.host.set}}
+    this.scheme = "{{#options.scheme}}{{.}}{{/options.scheme}}{{#unless options.scheme}}'http'{{/unless}}";
+    this.baseUri = string.Concat(this.scheme, "://", this.hostName {{#api.basePath}}, "{{.}}"{{/api.basePath}});
+}
 
 {{#api.operations}}
     /**
     * {{description}}
     {{#args}}
-    * @param { {{> Type}} } {{camlCase name}} {{description}}
+        * @param { {{> Type}} } {{camlCase name}} {{description}}
     {{/args}}
-    * @return { {{> Type successResponse}} } {{successResponse.title}}
+    * @return { {{> Type successsResponse}} } {{successResponse.title}}
     */
-    {{lowerCase verb}}{{#pathSegments}}{{#isParam}}By{{/isParam}}{{pascalCase name}}{{/pathSegments}}(
+    async Task<{{> Type successResponse}}> {{pascalCaseOverwriteCasing verb}}{{#pathSegments}}{{#isParam}}By{{/isParam}}{{pascalCase name}}{{/pathSegments}}(
     {{#args}}
-        {{camlCase name}}{{#if optional}}?{{/if}}: {{> Type}},
+        {{> Type}} {{camlCase name}}{{#if optional}} = default({{> Type}}){{/if}},
     {{/args}}
-        canceller?: angular.IDeferred<any>
-    ) : angular.IHttpPromise<{{> Type successResponse}}> {
+        CancellationToken cancellationToken = default(CancellationToken)
+        ) {
 
-        var uri = this.baseUri + {{#pathSegments}}{{#isParam}}{{#unless @first}}' + {{/unless}}String({{name}}){{#unless @last}} + '{{/unless}}{{/isParam}}{{#unless isParam}}{{#if @first}}'{{/if}}{{name}}{{#unless @last}}/{{/unless}}{{#if @last}}'{{/if}}{{/unless}}{{/pathSegments}};
+        var uri = this.baseUri + {{#pathSegments}}{{#isParam}}{{#unless @first}}" + {{/unless}}{{name}}.ToString(){{#unless @last}} + "{{/unless}}{{/isParam}}{{#unless isParam}}{{#if @first}}"{{/if}}{{name}}{{#unless @last}}/{{/unless}}{{#if @last}}"{{/if}}{{/unless}}{{/pathSegments}};
 
-        var httpRequestParams: any = {
-            method: '{{verb}}',
-            url: uri,
-            {{#isJsonResponse}}
-            json: true,
-            {{/isJsonResponse}}
-            {{#requestBody}}
-            data: {{camlCase name}},
-            {{/requestBody}}
-            params: {
-            {{#query}}
-                '{{name}}': {{camlCase name}}{{#unless @last}},{{/unless}}
-            {{/query}}
-            },
-            headers: {
-            {{#headers}}
-                '{{name}}': {{camlCase name}}{{#unless @last}},{{/unless}}
-            {{/headers}}
-            }
-        };
+    {{#if query}}
+        uri = AddQueryString(uri, new Dictionary<string, string>() {
+        {{#query}}
+            ["{{name}}"] = {{camlCase name}}.ToString(){{#unless @last}},{{/unless}}
+        {{/query}}
+        });
+    {{/if}}
+
+
+        var message = new HttpRequestMessage();
+        message.RequestUri = new Uri(uri, UriKind.Absolute);
+        message.Method = new HttpMethod("{{verb}}");
+
+    {{#isJsonRequest}}
+    {{#requestBody}}
+        message.Content = new StringContent(JsonConvert.SerializeObject({{camlCase name}}));
+    {{/requestBody}}
+    {{/isJsonRequest}}
+
+
+
+    {{#headers}}
+        message.Headers.Add("{{name}}", {{camlCase name}}.ToString());
+    {{/headers}}
 
     {{#isFormDataRequest}}
-        var formData = new FormData();
-    {{#formData}}
-        {{#getType this}}
-        {{#if isFile}}
-        formData.append('{{../name}}', new Blob([ {{camlCase ../name }} ], {type: 'application/octet-stream'}));
-        {{/if}}
-        {{#unless isFile}}
-        formData.append('{{../name}}', {{camlCase ../name}});
-        {{/unless}}
-        {{/getType}}
-    {{/formData}}
-        httpRequestParams.data = formData;
-        httpRequestParams.transformRequest = data => data;
-        httpRequestParams.headers['Content-Type'] = undefined;
+
     {{/isFormDataRequest}}
 
-        if (canceller){
-            httpRequestParams.timeout = canceller.promise;
+        var response = await httpClient.SendAsync(message, cancellationToken);
+
+        if (response.IsSuccessStatusCode){
+        {{#isJsonRequest}}
+            return JsonConvert.DeserializeObject<{{> Type successResponse}}>(await response.Content.ReadAsStringAsync());
+        {{/isJsonRequest}}
+        } else {
+            return JsonConvert.DeserializeObject<{{> Type successResponse}}>(await response.Content.ReadAsStringAsync());
         }
-
-    {{#mapLookup @root.options.security security}}
-        {{#configure}}
-        httpRequestParams = this.{{.}}(httpRequestParams);
-        {{/configure}}
-    {{/mapLookup}}
-
-        return this.$http(httpRequestParams);
     }
 
 {{/api.operations}}
+
+    /// <summary>
+        /// Append the given query keys and values to the uri.
+        /// </summary>
+    /// <param name="uri">The base uri.</param>
+    /// <param name="queryString">A collection of name value query pairs to append.</param>
+    /// <returns>The combined result.</returns>
+    public static string AddQueryString(
+        string uri,
+        IEnumerable<KeyValuePair<string, string>> queryString)
+    {
+        var anchorIndex = uri.IndexOf('#');
+        var uriToBeAppended = uri;
+        var anchorText = "";
+        // If there is an anchor, then the query string must be inserted before its first occurance.
+        if (anchorIndex != -1)
+        {
+            anchorText = uri.Substring(anchorIndex);
+            uriToBeAppended = uri.Substring(0, anchorIndex);
+        }
+
+        var queryIndex = uriToBeAppended.IndexOf('?');
+        var hasQuery = queryIndex != -1;
+
+        var sb = new StringBuilder();
+        sb.Append(uriToBeAppended);
+        foreach (var parameter in queryString)
+        {
+            sb.Append(hasQuery ? '&' : '?');
+            sb.Append(WebUtility.UrlEncode(parameter.Key));
+            sb.Append('=');
+            sb.Append(WebUtility.UrlEncode(parameter.Value));
+            hasQuery = true;
+        }
+
+        sb.Append(anchorText);
+        return sb.ToString();
+    }
+
+    public class FoodbieClientException<T>: Exception{
+        public T Response { get; set; }
+    }
 }

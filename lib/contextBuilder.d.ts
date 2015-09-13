@@ -11,6 +11,7 @@ export interface IType {
     isBuiltin: boolean;
     isDefinition: boolean;
     isArray: boolean;
+    isLanguageType: boolean;
 }
 export declare function getTypeMapper(): ITypeMapper;
 export declare function setTypeMapper(typeMapper: ITypeMapper): void;
@@ -61,6 +62,7 @@ export declare class Argument implements parser.IHasTypeInformation {
     items: parser.IHasTypeInformation;
     description: string;
     optional: boolean;
+    additionalProperties: parser.IHasTypeInformation;
     constructor(parameter: parser.IParameterOrReference);
 }
 export declare class Definition {
@@ -79,5 +81,6 @@ export declare class Property implements parser.IHasTypeInformation {
     description: string;
     items: parser.IHasTypeInformation;
     definition: Definition;
+    additionalProperties: parser.IHasTypeInformation;
     constructor(name: string, schema: parser.IProperty);
 }

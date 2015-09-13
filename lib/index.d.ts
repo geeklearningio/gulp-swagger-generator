@@ -20,6 +20,7 @@ declare module swaggerGenerator {
         };
         handlebarsContext?: any;
         through: any;
+        languageOptions?: any;
     }
 }
 declare function swaggerGenerator(options: swaggerGenerator.ISwaggerGeneratorOptions): NodeJS.ReadWriteStream;
