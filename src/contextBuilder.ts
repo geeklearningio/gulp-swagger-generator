@@ -35,6 +35,8 @@ export interface IGenerationContext {
     definitions?: Definition[];
     definitionsMap?: {[ref: string]: Definition};
     operations?: Operation[];
+    host?: string;
+    basePath?: string;
 }
 
 export function buildHandlebarsContext(api: parse.IParsedSwagger, renameDefinitions: {[from:string] : string}): any {
@@ -46,6 +48,9 @@ export function buildHandlebarsContext(api: parse.IParsedSwagger, renameDefiniti
     context.definitionsMap = {};
 
     context.operations = [];
+
+    context.host = api.api.host;
+    context.basePath = api.api.basePath;
 
     _.forEach(api.api.definitions, (definition: parser.ISchema, definitionName: string) => {
 

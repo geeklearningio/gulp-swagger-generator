@@ -20,6 +20,8 @@ export interface IGenerationContext {
         [ref: string]: Definition;
     };
     operations?: Operation[];
+    host?: string;
+    basePath?: string;
 }
 export declare function buildHandlebarsContext(api: parse.IParsedSwagger, renameDefinitions: {
     [from: string]: string;
