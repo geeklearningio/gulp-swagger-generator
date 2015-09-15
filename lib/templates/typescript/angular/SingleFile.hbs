@@ -4,6 +4,13 @@ module {{options.module}} {
     {{> Definition }}
 {{/api.definitions}}
 
+{{#if options.generateInterface}}
+    {{> Interface }}
+{{/if}}
+
     {{> Client }}
 
+{{#if options.generateMock}}
+    {{> Mock }}
+{{/if}}
 }

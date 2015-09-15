@@ -128,7 +128,7 @@ function loadTemplateFiles(context: swaggerGenerator.Context): Promise<swaggerGe
                         var fileName = path.basename(templateFilePath, path.extname(templateFilePath));
                         handlebars.registerPartial(fileName, content);
 
-                        templates[fileName] = handlebars.compile(content);
+                        templates[fileName] = handlebars.compile(content, {noEscape: true});
                     } else {
                         diagnostics.error(err);
                     }
@@ -167,6 +167,10 @@ function loadLanguageOptions(context: swaggerGenerator.Context): Promise<swagger
 }
 
 function registerHelpers() {
+
+    handlebars.registerHelper('json', (context: any) => {
+        return JSON.stringify(context, null, 4);
+    });
 
     handlebars.registerHelper('lowerCase', (context: string) => {
         return context.toLowerCase();

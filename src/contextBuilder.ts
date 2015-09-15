@@ -112,6 +112,7 @@ export class Operation {
     public description: string;
     public consumes: string[];
     public produces: string[];
+    public successSamples: {[contentType: string]: any};
 
     public security: string;
 
@@ -170,7 +171,8 @@ export class Operation {
 
         _.forEach(method.responses, (response: parser.IResponse, status: string) =>{
             if (status.indexOf('20') === 0){
-                this.successResponse = response.schema
+                this.successResponse = response.schema;
+                this.successSamples = response.examples;
             }
         });
 
