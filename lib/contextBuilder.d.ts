@@ -50,6 +50,9 @@ export declare class Operation {
     description: string;
     consumes: string[];
     produces: string[];
+    successSamples: {
+        [contentType: string]: any;
+    };
     security: string;
     constructor(pathName: string, verb: string, path: parser.IPath, method: parser.IOperation, context: any);
 }

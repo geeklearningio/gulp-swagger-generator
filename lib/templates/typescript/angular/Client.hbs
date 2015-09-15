@@ -1,4 +1,4 @@
-export class {{clientName}}  {
+export class {{clientName}}{{#if options.generateInterface}} implements I{{clientName}}{{/if}} {
     private baseUri: string;
     private hostName: string;
     private scheme: string;
