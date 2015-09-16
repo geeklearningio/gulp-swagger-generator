@@ -2,7 +2,8 @@ export class {{clientName}}Mock{{#if options.generateInterface}} implements I{{c
 
     /* @ngInject */
     constructor(
-        private $q: angular.IQService
+        private $q: angular.IQService,
+        private $timeout: any
     ) {
 
     }
@@ -27,12 +28,30 @@ export class {{clientName}}Mock{{#if options.generateInterface}} implements I{{c
             {{#isJsonResponse}}{{#mapLookup successSamples 'application/json'}}
             data = <any>{{json .}};
             {{/mapLookup}}{{/isJsonResponse}}
-
+        {{#unless @root.options.mock.delay}}
             return <any>this.$q.when<angular.IHttpPromiseCallbackArg<{{> Type successResponse}}>>({
                 data: data,
                 status: 200,
             });
+        {{/unless}}
+        {{#if @root.options.mock.delay}}
+            return <any>this.delayResponse<angular.IHttpPromiseCallbackArg<{{> Type successResponse}}>>({
+            data: data,
+            status: 200,
+            });
+        {{/if}}
         }
 
 {{/api.operations}}
+{{#if options.mock.delay}}
+    private delayResponse<T>(data: T): angular.IHttpPromise<T>{
+        var deferral = this.$q.defer<T>();
+
+        this.$timeout(()=>{
+            deferral.resolve(data);
+        }, {{options.mock.delay}});
+
+        return <any>deferral.promise;
     }
+{{/if}}
+}
