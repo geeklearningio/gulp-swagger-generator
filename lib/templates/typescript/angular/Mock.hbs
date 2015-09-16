@@ -19,10 +19,10 @@ export class {{clientName}}Mock{{#if options.generateInterface}} implements I{{c
     {{#args}}
         {{camlCase name}}{{#if optional}}?{{/if}}: {{> Type}},
     {{/args}}
-    canceller?: angular.IDeferred<any>
+        canceller?: angular.IDeferred<any>
         ) : angular.IHttpPromise<{{> Type successResponse}}> {
 
-            var data: {{> Type successResponse}} = null
+            var data: {{> Type successResponse}} = null;
 
             {{#isJsonResponse}}{{#mapLookup successSamples 'application/json'}}
             data = <any>{{json .}};

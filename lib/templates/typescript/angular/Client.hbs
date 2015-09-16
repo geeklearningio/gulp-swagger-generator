@@ -35,7 +35,7 @@ export class {{clientName}}{{#if options.generateInterface}} implements I{{clien
         canceller?: angular.IDeferred<any>
     ) : angular.IHttpPromise<{{> Type successResponse}}> {
 
-        var uri = this.baseUri + {{#pathSegments}}{{#isParam}}{{#unless @first}}' + {{/unless}}String({{name}}){{#unless @last}} + '{{/unless}}{{/isParam}}{{#unless isParam}}{{#if @first}}'{{/if}}{{name}}{{#unless @last}}/{{/unless}}{{#if @last}}'{{/if}}{{/unless}}{{/pathSegments}};
+        var uri = this.baseUri + {{#pathSegments}}{{#isParam}}{{#if @first}}'/' + {{/if}}{{#unless @first}}' + {{/unless}}String({{name}}){{#unless @last}} + '{{/unless}}{{/isParam}}{{#unless isParam}}{{#if @first}}'/{{/if}}{{name}}{{#unless @last}}/{{/unless}}{{#if @last}}'{{/if}}{{/unless}}{{/pathSegments}};
 
         var httpRequestParams: any = {
             method: '{{verb}}',
