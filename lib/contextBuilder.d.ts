@@ -23,6 +23,8 @@ export interface IGenerationContext {
     operations?: Operation[];
     host?: string;
     basePath?: string;
+    defaultConsumes?: string[];
+    defaultProduces?: string[];
 }
 export declare function buildHandlebarsContext(api: parse.IParsedSwagger, renameDefinitions: {
     [from: string]: string;
@@ -54,7 +56,7 @@ export declare class Operation {
         [contentType: string]: any;
     };
     security: string;
-    constructor(pathName: string, verb: string, path: parser.IPath, method: parser.IOperation, context: any);
+    constructor(pathName: string, verb: string, path: parser.IPath, method: parser.IOperation, context: IGenerationContext);
 }
 export declare class Argument implements parser.IHasTypeInformation {
     name: string;

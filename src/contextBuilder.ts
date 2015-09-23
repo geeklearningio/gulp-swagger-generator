@@ -38,6 +38,8 @@ export interface IGenerationContext {
     operations?: Operation[];
     host?: string;
     basePath?: string;
+    defaultConsumes?: string[];
+    defaultProduces?: string[];
 }
 
 export function buildHandlebarsContext(api: parse.IParsedSwagger, renameDefinitions: {[from:string] : string}): any {
@@ -52,6 +54,9 @@ export function buildHandlebarsContext(api: parse.IParsedSwagger, renameDefiniti
 
     context.host = api.api.host;
     context.basePath = api.api.basePath;
+
+    context.defaultConsumes = api.api.consumes ? api.api.consumes : [];
+    context.defaultProduces = api.api.produces ? api.api.produces : [];
 
     _.forEach(api.api.definitions, (definition: parser.ISchema, definitionName: string) => {
 
@@ -116,7 +121,7 @@ export class Operation {
 
     public security: string;
 
-    constructor(pathName: string, verb: string, path: parser.IPath, method: parser.IOperation, context: any) {
+    constructor(pathName: string, verb: string, path: parser.IPath, method: parser.IOperation, context: IGenerationContext) {
         this.rawPath = pathName;
         this.verb = verb;
         this.pathSegments = [];
@@ -152,8 +157,8 @@ export class Operation {
         this.args = this.args.sort(optionalThenAlpha);
 
 
-        this.consumes = method.consumes;
-        this.produces = method.produces;
+        this.consumes = method.consumes ? method.consumes : context.defaultConsumes;
+        this.produces = method.produces ? method.produces : context.defaultProduces;
 
         if (!this.consumes || !this.consumes.length) {
             this.consumes = ["application/json"];
@@ -169,8 +174,8 @@ export class Operation {
 
         this.security = method.security ? _.keys(method.security[0])[0] : null;
 
-        _.forEach(method.responses, (response: parser.IResponse, status: string) =>{
-            if (status.indexOf('20') === 0){
+        _.forEach(method.responses, (response: parser.IResponse, status: string) => {
+            if (status.indexOf('20') === 0) {
                 this.successResponse = response.schema;
                 this.successSamples = response.examples;
             }
@@ -204,7 +209,7 @@ export class Argument implements parser.IHasTypeInformation {
         this.type = parameter.type;
         this.format = parameter.format;
         this.items = parameter.items;
-        this.$ref = parameter.$ref;
+        this.$ref = (parameter.schema && parameter.schema.$ref) ? parameter.schema.$ref : parameter.$ref;
         this.description = parameter.description;
         this.optional = !parameter.required;
         this.additionalProperties = parameter.additionalProperties;

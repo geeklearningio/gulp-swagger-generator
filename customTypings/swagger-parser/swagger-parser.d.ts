@@ -108,6 +108,7 @@ declare module "swagger-parser" {
         in?: string;
         description?: string;
         required?: boolean;
+        schema?: ISchema;
     }
 
     export interface  IExternalDocumentation {
