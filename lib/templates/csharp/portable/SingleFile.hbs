@@ -12,6 +12,10 @@ namespace {{options.namespace}} {
     {{> Definition }}
 {{/api.definitions}}
 
+{{#if options.generateInterface}}
+    {{> Interface }}
+{{/if}}
+
     {{> Client }}
 
 }

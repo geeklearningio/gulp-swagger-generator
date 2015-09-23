@@ -115,9 +115,9 @@ class CSharpType implements contextBuilder.IType {
         } else if (format === "int64") {
             return new CSharpType('long', null, true, false, false);
         } else if (format === "float") {
-            return new CSharpType('long', null, true, false, false);
+            return new CSharpType('float', null, true, false, false);
         } else if (format === "double") {
-            return new CSharpType('long', null, true, false, false);
+            return new CSharpType('double', null, true, false, false);
         }
     }
 
