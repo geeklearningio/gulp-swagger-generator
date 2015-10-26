@@ -46,6 +46,9 @@ export class {{clientName}}{{#if options.generateInterface}} implements I{{clien
             {{#requestBody}}
             data: {{camlCase name}},
             {{/requestBody}}
+            {{#if @root.options.defaultTimeout}}
+            timeout: {{@root.options.defaultTimeout}},
+            {{/if}}
             params: {
             {{#query}}
                 '{{name}}': {{camlCase name}}{{#unless @last}},{{/unless}}
