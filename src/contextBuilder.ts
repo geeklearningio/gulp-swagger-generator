@@ -168,9 +168,9 @@ export class Operation {
             this.produces = ["application/json"];
         }
 
-        this.isJsonRequest = this.consumes[0] === "application/json";
-        this.isJsonResponse = this.produces[0] === "application/json";
-        this.isFormDataRequest = this.consumes[0] === "multipart/form-data";
+        this.isJsonRequest = this.consumes.filter(x=> x === "application/json").length > 0;
+        this.isJsonResponse = this.produces.filter(x=> x === "application/json").length > 0;
+        this.isFormDataRequest = this.consumes.filter(x=> x === "multipart/form-data").length > 0;
 
         this.security = method.security ? _.keys(method.security[0])[0] : null;
 
