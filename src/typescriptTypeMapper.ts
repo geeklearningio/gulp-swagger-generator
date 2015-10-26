@@ -79,7 +79,7 @@ class TypescriptType implements contextBuilder.IType {
     public static number: TypescriptType = new TypescriptType('number', null, true, false, false);
     public static boolean: TypescriptType = new TypescriptType('boolean', null, true, false, false);
     public static any: TypescriptType = new TypescriptType('any', null, true, false, false);
-    public static file: TypescriptType = new TypescriptType('string', null, true, false, false, false, true);
+    public static file: TypescriptType = new TypescriptType('Uint8Array', null, true, false, false, false, true);
 
     public static fromDefinition(definition: contextBuilder.Definition): TypescriptType {
         return new TypescriptType(null, definition, false, true, false);
