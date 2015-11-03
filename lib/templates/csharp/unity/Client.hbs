@@ -3,16 +3,10 @@ public class {{clientName}}{{#if options.generateInterface}}: I{{clientName}}{{/
     private string hostName;
     private string scheme;
     private JsonSerializerSettings settings;
-    public static readonly UnitySynchronizationContext context;
 
 {{#options.inject}}
     private {{type}} {{name}};
 {{/options.inject}}
-
-static {{clientName}}() {
-    context = new UnitySynchronizationContext ();
-    System.Threading.SynchronizationContext.SetSynchronizationContext (context);
-}
 
 public {{clientName}}(
 {{#options.inject}}
@@ -42,7 +36,7 @@ public {{clientName}}(
     {{/args}}
     * @return { {{> Type successsResponse}} } {{successResponse.title}}
     */
-    public void {{pascalCaseOverwriteCasing verb}}{{#pathSegments}}{{#isParam}}By{{/isParam}}{{pascalCase name}}{{/pathSegments}}(
+    public IEnumerator {{pascalCaseOverwriteCasing verb}}{{#pathSegments}}{{#isParam}}By{{/isParam}}{{pascalCase name}}{{/pathSegments}}(
         Action<{{> Type successResponse}}> callback{{#if args}},{{/if}}
     {{#args}}
         {{> Type}} {{camlCase name}}{{#if optional}} = default({{> Type}}){{/if}}{{#unless @last}},{{/unless}}
@@ -88,28 +82,47 @@ public {{clientName}}(
     {{/mapLookup}}
 
     {{#if requestBody}}
-        req.BeginGetRequestStream ((System.IAsyncResult state) => {
-            var result = req.EndGetRequestStream(state);
-            using (var writer = new StreamWriter(result, System.Text.Encoding.UTF8)){
-                writer.Write(JsonConvert.SerializeObject({{camlCase requestBody.name}}));
-            }
-            result.Close();
-    {{/if}}
-            req.BeginGetResponse ((System.IAsyncResult responseState) => {
-                var response = req.EndGetResponse(responseState);
+        IAsyncResult getRequestStream = req.BeginGetRequestStream(null, null);
 
-                using (var streamReader = new StreamReader(response.GetResponseStream())){
-                    try{
-                        context.Post((res)=>callback(({{> Type successResponse}})res), JsonConvert.DeserializeObject<{{> Type successResponse}}>(streamReader.ReadToEnd(), this.settings));
-                    }
-                    catch(System.Exception ex){
-                        Debug.LogError(ex);
-                    }
-                }
-            }, null);
-    {{#if requestBody}}
-        }, null);
+        while (!getRequestStream.IsCompleted)
+            yield return null;
+        try {
+            var requestStream = req.EndGetRequestStream(getRequestStream);
+
+            using (var writer = new StreamWriter(requestStream, System.Text.Encoding.UTF8)){
+                writer.Write(JsonConvert.SerializeObject({{camlCase requestBody.name}}, this.settings));
+            }
+
+            requestStream.Close();
+        }
+
+        catch (System.Exception ex)
+        {
+            Debug.LogError (ex.ToString ());
+        }
+
     {{/if}}
+
+        IAsyncResult getResponse = req.BeginGetResponse(null, null);
+
+        while (!getResponse.IsCompleted)
+            yield return null;
+
+        try{
+            var response = req.EndGetResponse(getResponse);
+
+            using (var streamReader = new StreamReader(response.GetResponseStream())){
+                try{
+                    callback(JsonConvert.DeserializeObject<{{> Type successResponse}}>(streamReader.ReadToEnd(), this.settings));
+                }
+                catch(System.Exception ex){
+                    Debug.LogError(ex.ToString());
+                }
+            }
+        }
+        catch(System.Exception ex){
+            Debug.LogError(ex.ToString());
+        }
     }
 
 {{/api.operations}}
@@ -160,74 +173,6 @@ public {{clientName}}(
         return sb.ToString();
     }
 
-public class PendingOperation {
-
-System.Threading.SendOrPostCallback Callback { get; set;}
-object State { get; set;}
-System.Threading.EventWaitHandle Handle { get; set;}
-
-public PendingOperation(System.Threading.SendOrPostCallback callback, object state, System.Threading.EventWaitHandle handle){
-this.Callback = callback;
-this.State = state;
-this.Handle = handle;
-}
-
-public void Invoke(){
-Callback(State);
-if (Handle != null){
-Handle.Set();
-}
-}
-}
 
 
-public class UnitySynchronizationContext: System.Threading.SynchronizationContext
-{
-System.Collections.Generic.Queue<PendingOperation> pendingOperations = new System.Collections.Generic.Queue<PendingOperation>();
-    private bool hasWork = false;
-
-    public UnitySynchronizationContext ()
-    {
-    }
-
-    public override void Send (System.Threading.SendOrPostCallback d, object state)
-    {
-    System.Threading.ManualResetEvent rse = new System.Threading.ManualResetEvent (false);
-    lock (pendingOperations) {
-    this.pendingOperations.Enqueue(new PendingOperation(d, state, rse));
-    hasWork = true;
-    }
-    rse.WaitOne();
-    rse.Close();
-    }
-
-    public override void Post (System.Threading.SendOrPostCallback d, object state)
-    {
-    lock (pendingOperations) {
-    this.pendingOperations.Enqueue(new PendingOperation(d, state, null));
-    hasWork = true;
-    }
-    }
-
-
-    public void Process(){
-    PendingOperation operation = null;
-    bool hasWork = true;
-    while (hasWork) {
-    lock (pendingOperations) {
-    if (pendingOperations.Count > 0) {
-    operation = pendingOperations.Dequeue ();
-    } else {
-    hasWork = false;
-    }
-    }
-    if (operation == null) {
-    return;
-    } else {
-    operation.Invoke();
-    operation = null;
-    }
-    }
-    }
-    }
 }
