@@ -8,7 +8,7 @@ public interface I{{clientName}}  {
     {{/args}}
     * @return { {{> Type successsResponse}} } {{successResponse.title}}
     */
-    void {{pascalCaseOverwriteCasing verb}}{{#pathSegments}}{{#isParam}}By{{/isParam}}{{pascalCase name}}{{/pathSegments}}(
+    IEnumerator {{pascalCaseOverwriteCasing verb}}{{#pathSegments}}{{#isParam}}By{{/isParam}}{{pascalCase name}}{{/pathSegments}}(
         Action<{{> Type successResponse}}> callback{{#if args}},{{/if}}
     {{#args}}
         {{> Type}} {{camlCase name}}{{#if optional}} = default({{> Type}}){{/if}}{{#unless @last}},{{/unless}}
