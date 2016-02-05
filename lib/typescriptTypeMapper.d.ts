@@ -1,4 +1,5 @@
 /// <reference path="../typings.d.ts" />
+/// <reference path="index.d.ts" />
 import contextBuilder = require('./contextBuilder');
-import index = require('index');
-export declare function createTypeMapper(context: index.Context): contextBuilder.ITypeMapper;
+import swaggerGenerator = require('./swaggerGenerator');
+export declare function createTypeMapper(context: swaggerGenerator.Context): contextBuilder.ITypeMapper;
