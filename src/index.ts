@@ -12,33 +12,13 @@ import handlebars = require('handlebars');
 import contextBuilder = require('./contextBuilder');
 import gutil = require('gulp-util');
 import _ = require('lodash');
-
+import swaggerGeneratorDef = require('./swaggerGenerator');
 let join = Promise.join;
 
-module swaggerGenerator {
-
-    export interface ISwaggerGeneratorOptions {
-        clientName?: string;
-        singleFile?: boolean;
-        template: string;
-        templatePath?: string;
-        templateOptions: any;
-        handlerbarsExtensions?: any
-        renameDefinitions?: {[from: string]: string}
-    }
-
-    export interface Context {
-        options: ISwaggerGeneratorOptions,
-        api?: parse.IParsedSwagger,
-        templates?: {[name: string]: HandlebarsTemplateDelegate}
-        handlebarsContext?: any,
-        through: any;
-        languageOptions?: any;
-    }
-}
 
 
-function swaggerGenerator(options: swaggerGenerator.ISwaggerGeneratorOptions) {
+
+function swaggerGenerator(options: swaggerGeneratorDef.ISwaggerGeneratorOptions) {
     registerHelpers();
 
     if (!options.clientName) {
@@ -63,7 +43,7 @@ function swaggerGenerator(options: swaggerGenerator.ISwaggerGeneratorOptions) {
         if (file.isBuffer()) {
 
             parse.parse(file.history[0])
-                .then((result): swaggerGenerator.Context => {
+                .then((result): swaggerGeneratorDef.Context => {
                     return {options: options, api: result, through: through2Context};
                 })
                 .then(loadTemplateFiles)
@@ -74,7 +54,7 @@ function swaggerGenerator(options: swaggerGenerator.ISwaggerGeneratorOptions) {
     })
 }
 
-function wrapHandleBarsContext(context: swaggerGenerator.Context): Promise<swaggerGenerator.Context> {
+function wrapHandleBarsContext(context: swaggerGeneratorDef.Context): Promise<swaggerGeneratorDef.Context> {
 
     context.handlebarsContext = {
         api: contextBuilder.buildHandlebarsContext(context.api, context.options.renameDefinitions),
@@ -90,7 +70,7 @@ function wrapHandleBarsContext(context: swaggerGenerator.Context): Promise<swagg
     return Promise.resolve(context);
 }
 
-function applyTemplates(context: swaggerGenerator.Context): Promise<swaggerGenerator.Context> {
+function applyTemplates(context: swaggerGeneratorDef.Context): Promise<swaggerGeneratorDef.Context> {
 
     if (context.options.singleFile) {
         let singleFileTemplate = context.templates['SingleFile'];
@@ -108,14 +88,14 @@ function applyTemplates(context: swaggerGenerator.Context): Promise<swaggerGener
 }
 
 
-function loadTemplateFiles(context: swaggerGenerator.Context): Promise<swaggerGenerator.Context> {
+function loadTemplateFiles(context: swaggerGeneratorDef.Context): Promise<swaggerGeneratorDef.Context> {
     var templateDir: string = context.options.templatePath ?
         context.options.templatePath : path.join(__dirname, './templates/', context.options.template.replace(/-/g, '/'));
 
     gutil.log(templateDir);
 
     var templates: {[name: string]: HandlebarsTemplateDelegate} = {};
-    var deferral = Promise.defer<swaggerGenerator.Context>();
+    var deferral = Promise.defer<swaggerGeneratorDef.Context>();
 
     fs.readdir(templateDir, (err: NodeJS.ErrnoException, files: string[]) => {
         gutil.log(JSON.stringify(files));
@@ -150,8 +130,8 @@ function loadTemplateFiles(context: swaggerGenerator.Context): Promise<swaggerGe
     return deferral.promise;
 }
 
-function loadLanguageOptions(context: swaggerGenerator.Context): Promise<swaggerGenerator.Context> {
-    var deferral = Promise.defer<swaggerGenerator.Context>();
+function loadLanguageOptions(context: swaggerGeneratorDef.Context): Promise<swaggerGeneratorDef.Context> {
+    var deferral = Promise.defer<swaggerGeneratorDef.Context>();
     var languageDir: string = context.options.templatePath ?
         context.options.templatePath : path.join(__dirname, './templates/', context.options.template.split(/-/g)[0]);
 
