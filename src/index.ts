@@ -49,7 +49,8 @@ function swaggerGenerator(options: swaggerGeneratorDef.ISwaggerGeneratorOptions)
                 .then(loadTemplateFiles)
                 .then(loadLanguageOptions)
                 .then(wrapHandleBarsContext)
-                .then(applyTemplates);
+                .then(applyTemplates)
+                .then(function() {cb();});
         }
     })
 }
