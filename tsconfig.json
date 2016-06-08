@@ -17,6 +17,7 @@
         "src/parse.ts",
         "src/contextBuilder",
         "src/typescriptTypeMapper",
-        "src/csharpTypeMapper"
+        "src/csharpTypeMapper",
+        "src/swaggerGenerator"
     ]
 }

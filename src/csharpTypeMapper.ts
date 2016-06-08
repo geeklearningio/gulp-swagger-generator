@@ -1,12 +1,12 @@
 /// <reference path="../typings.d.ts" />
 
 import contextBuilder = require('./contextBuilder');
-import index = require('index');
+import swaggerGenerator = require('./swaggerGenerator');
 import parser = require('swagger-parser');
 import gutil = require('gulp-util');
 import _ = require('lodash');
 
-export function createTypeMapper(context: index.Context): contextBuilder.ITypeMapper {
+export function createTypeMapper(context: swaggerGenerator.Context): contextBuilder.ITypeMapper {
     gutil.log(JSON.stringify(Object.keys(context.handlebarsContext.api)));
     return new CSharpTypeMapper(context.handlebarsContext.api.definitionsMap);
 }
