@@ -1,4 +1,6 @@
+{{#if options.module}}
 module {{options.module}} {
+{{/if}}
     "use strict";
 {{#api.definitions}}
     {{> Definition }}
@@ -17,4 +19,6 @@ module {{options.module}} {
 {{#if options.generateMock}}
     {{> Mock }}
 {{/if}}
+{{#if options.module}}
 }
+{{/if}}

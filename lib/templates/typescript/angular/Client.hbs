@@ -16,7 +16,12 @@ export class {{clientName}}{{#if options.generateInterface}} implements I{{clien
             this.hostName = {{.}};
         }
         {{/options.host.set}}
-        this.scheme = '{{#options.scheme}}{{.}}{{/options.scheme}}{{#unless options.scheme}}'http'{{/unless}}';
+        this.scheme = '{{#options.scheme.override}}{{.}}{{/options.scheme.override}}{{#unless options.scheme.override}}'http'{{/unless}}';
+        {{#options.scheme.set}}
+            if ({{.}}) {
+                this.scheme = {{.}};
+            }
+        {{/options.scheme.set}}
         this.baseUri = this.scheme + '://' + this.hostName {{#api.basePath}}+ '{{.}}'{{/api.basePath}};
     }
 
