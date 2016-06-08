@@ -48,6 +48,7 @@ export declare class Operation {
     responseContentType: string;
     isJsonRequest: boolean;
     isJsonResponse: boolean;
+    isBinaryResponse: boolean;
     isFormDataRequest: boolean;
     description: string;
     consumes: string[];
