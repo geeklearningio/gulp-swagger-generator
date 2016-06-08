@@ -48,6 +48,9 @@ export class {{clientName}}{{#if options.generateInterface}} implements I{{clien
             {{#isJsonResponse}}
             json: true,
             {{/isJsonResponse}}
+            {{#isBinaryResponse}}
+            responseType: 'arraybuffer',
+            {{/isBinaryResponse}}
             {{#requestBody}}
             data: {{#if @root.options.arguments.asInterface}}args.{{/if}}{{camlCase name}},
             {{/requestBody}}
