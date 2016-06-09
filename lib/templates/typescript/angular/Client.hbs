@@ -1,27 +1,17 @@
-export class {{clientName}}{{#if options.generateInterface}} implements I{{clientName}}{{/if}} {
+export class {{clientName}}{{#if @root.options.generateInterface}} implements I{{clientName}}{{/if}} {
     private baseUri: string;
     private hostName: string;
     private scheme: string;
 
     /* @ngInject */
     constructor(
-        {{#options.inject}}
+        {{#if @root.options.inject}}
         private {{name}}: {{type}},
-        {{/options.inject}}
+        {{/if}}
         private $http: angular.IHttpService
     ) {
-        this.hostName = '{{#options.host.override}}{{.}}{{/options.host.override}}{{#unless options.host.override}}{{api.host}}{{/unless}}';
-        {{#options.host.set}}
-        if ({{.}}) {
-            this.hostName = {{.}};
-        }
-        {{/options.host.set}}
-        this.scheme = '{{#options.scheme.override}}{{.}}{{/options.scheme.override}}{{#unless options.scheme.override}}'http'{{/unless}}';
-        {{#options.scheme.set}}
-            if ({{.}}) {
-                this.scheme = {{.}};
-            }
-        {{/options.scheme.set}}
+        this.hostName = '{{#if @root.options.host}}{{@root.options.host}}{{else}}{{api.host}}{{/if}}';
+        this.scheme = '{{#if @root.options.scheme}}{{@root.options.scheme}}{{else}}http{{/if}}';
         this.baseUri = this.scheme + '://' + this.hostName {{#api.basePath}}+ '{{.}}'{{/api.basePath}};
     }
 
