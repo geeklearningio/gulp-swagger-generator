@@ -36,7 +36,11 @@ class TypescriptTypeMapper implements contextBuilder.ITypeMapper {
             if (type === 'integer' || type === 'number') {
                 return TypescriptType.number;
             } else if (type == 'string') {
-                return TypescriptType.string;
+                if (property.format == 'date-time' || property.format == 'date') {
+                    return TypescriptType.date;
+                } else {
+                    return TypescriptType.string;
+                }
             } else if (type == 'boolean') {
                 return TypescriptType.boolean;
             } else if (type === 'object') {
@@ -76,6 +80,7 @@ class TypescriptType implements contextBuilder.IType {
         this.isLanguageType = true;
     }
 
+    public static date: TypescriptType = new TypescriptType('Date', null, true, false, false);
     public static string: TypescriptType = new TypescriptType('string', null, true, false, false);
     public static number: TypescriptType = new TypescriptType('number', null, true, false, false);
     public static boolean: TypescriptType = new TypescriptType('boolean', null, true, false, false);
