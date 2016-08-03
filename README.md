@@ -2,7 +2,7 @@
 
 Gulp code generator for Swagger 2.0. This package generates your api clients using handlebars templates.
 
-*This project is still under development and you can expect big changes especially around seperation of concerns, generation model or extensibility. The documentation will be improved shortly.*
+**This project is still under development and you can expect big changes especially around seperation of concerns, generation model or extensibility. The gulp task will eventually be a wrapper around [a brand new module](https://github.com/geeklearningio/gl-swagger-generator/tree/develop/src/node-swagger-generator)**
 
 At the moment it comes with the following builtin templates :
 
