@@ -73,19 +73,33 @@ function wrapHandleBarsContext(context: swaggerGeneratorDef.Context): Promise<sw
 }
 
 function applyTemplates(context: swaggerGeneratorDef.Context): Promise<swaggerGeneratorDef.Context> {
-
-    if (context.options.singleFile) {
-        let singleFileTemplate = context.templates['SingleFile'];
-        gutil.log(JSON.stringify(Object.keys(context.templates)));
+    let templates: string[] = [];
+    if(context.options.singleFile) {
+        templates.push('SingleFile');
+    } else {
+        templates.push('Definition');
+        if(context.options.templateOptions.generateInterface) {
+            templates.push('Interface');
+        }
+        if(context.options.templateOptions.arguments && context.options.templateOptions.arguments.asInterface) {
+            templates.push('ArgumentInterface');
+        }
+        templates.push('Client');
+        if(context.options.templateOptions.generateMock) {
+            templates.push('Mock');
+        }
+    }
+    for(let template of templates) {
+        gutil.log(template);
+        let fileName = context.options.singleFile ? context.options.clientName : template;
         var serviceClientFile = new gutil.File({
             cwd: "",
             base: "",
-            path: context.options.clientName + context.languageOptions.fileExtension,
-            contents: new Buffer(singleFileTemplate(context.handlebarsContext), 'utf8')
+            path: fileName + context.languageOptions.fileExtension,
+            contents: new Buffer(context.templates[template](context.handlebarsContext), 'utf8')
         });
         context.through.push(serviceClientFile);
     }
-
     return Promise.resolve(context);
 }
 

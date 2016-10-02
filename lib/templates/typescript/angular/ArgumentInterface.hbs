@@ -1,9 +1,20 @@
-{{#api.operations}}
-    /*{{pascalCase verb}}{{#pathSegments}}{{#isParam}}By{{/isParam}}{{pascalCase name}}{{/pathSegments}} operation arguments. */
-    export interface I{{pascalCaseOverwriteCasing verb}}{{#pathSegments}}{{#isParam}}By{{/isParam}}{{pascalCase name}}{{/pathSegments}}Args {
-    {{#args}}
-        /*{{description}}*/
-        {{camlCase name}}{{#if optional}}?{{/if}}: {{> Type}};
-    {{/args}}
-    }
-{{/api.operations}}
+{{#unless @root.isSingleFile }}
+{{#if @root.options.module }}
+module {{@root.options.module}} {
+{{/if}}
+    "use strict";
+{{/unless}}
+    {{#api.operations}}
+        /*{{pascalCase verb}}{{#pathSegments}}{{#isParam}}By{{/isParam}}{{pascalCase name}}{{/pathSegments}} operation arguments. */
+        export interface I{{pascalCaseOverwriteCasing verb}}{{#pathSegments}}{{#isParam}}By{{/isParam}}{{pascalCase name}}{{/pathSegments}}Args {
+        {{#args}}
+            /*{{description}}*/
+            {{camlCase name}}{{#if optional}}?{{/if}}: {{> Type}};
+        {{/args}}
+        }
+    {{/api.operations}}
+{{#unless @root.isSingleFile }}
+{{#if @root.options.module }}
+}
+{{/if}}
+{{/unless}}

@@ -1,10 +1,20 @@
-
-/*{{pascalCase rawName}}*/
-export interface {{pascalCase rawName}} {{#ancestor}}extends {{pascalCase rawName}}{{/ancestor}} {
-
-{{#properties}}
-    /*{{description}}*/
-    {{name}} : {{> Type }};
-
-{{/properties}}
+{{#unless @root.isSingleFile }}
+{{#if @root.options.module }}
+module {{@root.options.module}} {
+{{/if}}
+    "use strict";
+{{/unless}}
+{{#api.definitions}}
+    /*{{pascalCase rawName}}*/
+    export interface {{pascalCase rawName}} {{#ancestor}}extends {{pascalCase rawName}}{{/ancestor}} {
+    {{#properties}}
+        /*{{description}}*/
+        {{name}} : {{> Type }};
+    {{/properties}}
+    }
+{{/api.definitions}}
+{{#unless @root.isSingleFile }}
+{{#if @root.options.module }}
 }
+{{/if}}
+{{/unless}}
