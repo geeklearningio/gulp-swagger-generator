@@ -12,7 +12,7 @@ export interface IParsedSwagger {
 
 export function parse(file: string): Promise<IParsedSwagger> {
     var deferral = Promise.defer<IParsedSwagger>();
-    parser.parse(file,{
+    parser.dereference(file,{
         parseYaml : true,
         dereference$Refs : false,
         dereferenceInternal$Refs :  false,
