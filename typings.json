@@ -1,0 +1,14 @@
+{
+  "name": "gulp-swagger-generator",
+  "dependencies": {},
+  "globalDependencies": {
+    "async": "registry:dt/async#2.0.1+20160804113311",
+    "bluebird": "registry:dt/bluebird#3.0.0+20160811111256",
+    "chalk": "registry:dt/chalk#0.4.0+20160317120654",
+    "gulp-util": "registry:dt/gulp-util#0.0.0+20160316155526",
+    "lodash": "registry:dt/lodash#4.14.0+20160817155621",
+    "node": "registry:dt/node#6.0.0+20160817204926",
+    "through2": "registry:dt/through2#2.0.0+20160317120654",
+    "vinyl": "registry:dt/vinyl#1.1.0+20160316155526"
+  }
+}

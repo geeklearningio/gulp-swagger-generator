@@ -8,16 +8,10 @@
         "declaration": true,
         "outDir": "./lib"
     },
-    "filesGlob": [
-        "src/**/*.ts"
-    ],
     "files": [
+        "customTypings/node-swagger-generator.d.ts",
+        "typings/index.d.ts",
         "src/index.ts",
-        "src/diagnostics.ts",
-        "src/parse.ts",
-        "src/contextBuilder",
-        "src/typescriptTypeMapper",
-        "src/csharpTypeMapper",
-        "src/swaggerGenerator"
+        "src/diagnostics.ts"
     ]
 }

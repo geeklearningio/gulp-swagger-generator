@@ -1,5 +1,3 @@
-/// <reference path="../typings.d.ts" />
-
 import gutil = require('gulp-util');
 
 

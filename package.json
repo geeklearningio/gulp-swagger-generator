@@ -13,25 +13,19 @@
   "lib"
  ],
  "dependencies": {
-  "async": "^1.4.2",
-  "bluebird": "^2.10.0",
-  "chalk": "^1.1.1",
-  "gulp-util": "^3.0.6",
-  "handlebars": "^4.0.2",
-  "lodash": "^3.10.1",
-  "swagger-parser": "^3.0.0-alpha.5",
+  "async": "^2.1.2",
+  "bluebird": "^3.4.6",
+  "chalk": "^1.1.3",
+  "gulp-util": "^3.0.7",
+  "lodash": "^4.16.4",
   "through2": "^2.0.0",
-  "vinyl": "^0.5.3",
   "yargs": "^3.24.0"
  },
+ "peerDependencies": {
+    "node-swagger-generator" : "0.x"
+ },
  "devDependencies": {
-  "gulp": "^3.9.0",
-  "gulp-bump": "^0.3.1",
-  "gulp-help": "^1.6.0",
-  "gulp-jasmine": "^2.0.1",
-  "gulp-tslint": "^3.0.2-beta",
-  "jasmine": "^2.3.1",
-  "tslint": "2.*"
+  "jasmine": "^2.3.1"
  },
  "engines": {
   "node": ">=0.10.0"
