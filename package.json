@@ -25,9 +25,13 @@
     "node-swagger-generator" : "0.x"
  },
  "devDependencies": {
-  "jasmine": "^2.3.1"
+  "jasmine": "^2.3.1",
+  "typescript": "2.0.3"
  },
  "engines": {
   "node": ">=0.10.0"
+ },
+ "scripts": {
+     "build": "tsc"
  }
 }
