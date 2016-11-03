@@ -22,7 +22,7 @@
   "yargs": "^3.24.0"
  },
  "peerDependencies": {
-    "node-swagger-generator" : "0.x"
+
  },
  "devDependencies": {
   "jasmine": "^2.3.1",

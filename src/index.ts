@@ -37,7 +37,7 @@ function swaggerGenerator(options: nodeSwaggerGenerator.ISwaggerGeneratorOptions
         }
 
         if (file.isBuffer()) {
-            nodeSwaggerGenerator.generateFromJsonOrYaml(file.history[0], options, new GulpSink(through2Context))
+            nodeSwaggerGenerator.generateFromJsonOrYaml(file.history.pop(), options, new GulpSink(through2Context))
             .catch((err: any) => cb(err))
             .then(() => cb());
         }
