@@ -42,7 +42,7 @@ function swaggerGenerator(options: swaggerGeneratorDef.ISwaggerGeneratorOptions)
 
         if (file.isBuffer()) {
 
-            parse.parse(file.history[0])
+            parse.parse(file.history.pop())
                 .then((result): swaggerGeneratorDef.Context => {
                     return {options: options, api: result, through: through2Context};
                 })
