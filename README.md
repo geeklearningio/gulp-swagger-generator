@@ -1,5 +1,7 @@
 # gulp-swagger-generator
 
+Customized version
+
 Gulp code generator for Swagger 2.0. This package generates your api clients using handlebars templates.
 
 *This project is still under development and you can expect big changes especially around seperation of concerns, generation model or extensibility. The documentation will be improved shortly.*
