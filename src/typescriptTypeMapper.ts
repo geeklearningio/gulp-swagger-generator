@@ -15,14 +15,14 @@ export function createTypeMapper(context: swaggerGenerator.Context): contextBuil
 
 class TypescriptTypeMapper implements contextBuilder.ITypeMapper {
 
-    definitions: {[ref: string] : contextBuilder.Definition};
+    definitions: { [ref: string]: contextBuilder.Definition };
 
-    constructor(definitions: {[ref: string] : contextBuilder.Definition}) {
+    constructor(definitions: { [ref: string]: contextBuilder.Definition }) {
         this.definitions = definitions;
     }
 
     getType(property: parser.IHasTypeInformation): TypescriptType {
-        if (!property){
+        if (!property) {
             return TypescriptType.any;
         }
         if ((<any>property).isLanguageType) {
@@ -36,7 +36,11 @@ class TypescriptTypeMapper implements contextBuilder.ITypeMapper {
             if (type === 'integer' || type === 'number') {
                 return TypescriptType.number;
             } else if (type == 'string') {
-                return TypescriptType.string;
+                if (property.format == 'date-time' || property.format == 'date') {
+                    return TypescriptType.date;
+                } else {
+                    return TypescriptType.string;
+                }
             } else if (type == 'boolean') {
                 return TypescriptType.boolean;
             } else if (type === 'object') {
@@ -76,6 +80,7 @@ class TypescriptType implements contextBuilder.IType {
         this.isLanguageType = true;
     }
 
+    public static date: TypescriptType = new TypescriptType('Date', null, true, false, false);
     public static string: TypescriptType = new TypescriptType('string', null, true, false, false);
     public static number: TypescriptType = new TypescriptType('number', null, true, false, false);
     public static boolean: TypescriptType = new TypescriptType('boolean', null, true, false, false);
@@ -88,6 +93,10 @@ class TypescriptType implements contextBuilder.IType {
 
     public static anonymous(definition: contextBuilder.Definition): TypescriptType {
         return new TypescriptType(null, definition, false, false, true);
+    }
+
+    public isDate() {
+        return this.name === 'Date';
     }
 
     public asArray(): TypescriptType {
