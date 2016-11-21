@@ -15,14 +15,14 @@ export function createTypeMapper(context: swaggerGenerator.Context): contextBuil
 
 class TypescriptTypeMapper implements contextBuilder.ITypeMapper {
 
-    definitions: {[ref: string] : contextBuilder.Definition};
+    definitions: { [ref: string]: contextBuilder.Definition };
 
-    constructor(definitions: {[ref: string] : contextBuilder.Definition}) {
+    constructor(definitions: { [ref: string]: contextBuilder.Definition }) {
         this.definitions = definitions;
     }
 
     getType(property: parser.IHasTypeInformation): TypescriptType {
-        if (!property){
+        if (!property) {
             return TypescriptType.any;
         }
         if ((<any>property).isLanguageType) {
@@ -93,6 +93,10 @@ class TypescriptType implements contextBuilder.IType {
 
     public static anonymous(definition: contextBuilder.Definition): TypescriptType {
         return new TypescriptType(null, definition, false, false, true);
+    }
+
+    public isDate() {
+        return this.name === 'Date';
     }
 
     public asArray(): TypescriptType {
