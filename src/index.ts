@@ -24,7 +24,7 @@ class GulpSink implements nodeSwaggerGenerator.ISink {
 }
 
 
-function swaggerGenerator(options: nodeSwaggerGenerator.ISwaggerGeneratorOptions) {
+function swaggerGenerator(options: nodeSwaggerGenerator.ISwaggerGeneratorOptions, templateStores?: string[]) {
     return through.obj(function (file: any, enc: any, cb: Function) {
         let through2Context = this;
 
@@ -37,7 +37,7 @@ function swaggerGenerator(options: nodeSwaggerGenerator.ISwaggerGeneratorOptions
         }
 
         if (file.isBuffer()) {
-            nodeSwaggerGenerator.generateFromJsonOrYaml(file.history.pop(), options, new GulpSink(through2Context))
+            nodeSwaggerGenerator.generateFromJsonOrYaml(file.history.pop(), options, new GulpSink(through2Context), templateStores)
             .catch((err: any) => cb(err))
             .then(() => cb());
         }

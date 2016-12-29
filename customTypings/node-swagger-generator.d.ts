@@ -55,6 +55,6 @@ declare module "node-swagger-generator" {
         renameDefinitions?: { [from: string]: string }
     }
 
-    export function generateFromJsonOrYaml(swaggerJsonOrYaml: string, options: ISwaggerGeneratorOptions, sink: ISink): any;
+    export function generateFromJsonOrYaml(swaggerJsonOrYaml: string, options: ISwaggerGeneratorOptions, sink: ISink, templateStores?: string[]): any;
 
 }
